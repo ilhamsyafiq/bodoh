@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BODOH</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Bungee+Shade&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg1: #1a0033;
+    --bg2: #3d0066;
+    --pink: #ff2e93;
+    --yellow: #ffe600;
+    --cyan: #00f0ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    background: radial-gradient(circle at 50% 40%, var(--bg2), var(--bg1));
+    font-family: 'Bungee', system-ui, sans-serif;
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    user-select: none;
+  }
+
+  /* Floating emojis in the background */
+  .float {
+    position: fixed; bottom: -60px; font-size: 2rem; opacity: .7;
+    animation: rise linear forwards; pointer-events: none;
+  }
+  @keyframes rise {
+    to { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* The big BODOH title */
+  .title {
+    display: flex; gap: .05em;
+    font-family: 'Bungee Shade', 'Bungee', sans-serif;
+    font-size: clamp(3.5rem, 17vw, 12rem);
+    cursor: pointer;
+  }
+  .title span {
+    display: inline-block;
+    animation: bounce 1.2s ease-in-out infinite, hue 3s linear infinite;
+    text-shadow: 0 0 20px currentColor, 6px 6px 0 #000;
+  }
+  .title span:nth-child(1) { animation-delay: 0s, 0s;    color: var(--pink); }
+  .title span:nth-child(2) { animation-delay: .1s, .3s;  color: var(--yellow); }
+  .title span:nth-child(3) { animation-delay: .2s, .6s;  color: var(--cyan); }
+  .title span:nth-child(4) { animation-delay: .3s, .9s;  color: var(--yellow); }
+  .title span:nth-child(5) { animation-delay: .4s, 1.2s; color: var(--pink); }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0) rotate(-4deg) scale(1); }
+    50%      { transform: translateY(-30px) rotate(4deg) scale(1.1); }
+  }
+  @keyframes hue { to { filter: hue-rotate(360deg); } }
+
+  .sub {
+    position: fixed; bottom: 8vh; width: 100%; text-align: center;
+    font-size: clamp(.9rem, 3vw, 1.3rem); color: #ffffffaa;
+    animation: blink 1s steps(2) infinite;
+  }
+  @keyframes blink { 50% { opacity: .2; } }
+
+  /* Popup */
+  .overlay {
+    position: fixed; inset: 0; background: #000a;
+    display: none; z-index: 10;
+  }
+  .overlay.show { display: block; }
+  .popup {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(360px, calc(100vw - 32px));
+    background: linear-gradient(135deg, var(--yellow), var(--pink));
+    color: #1a0033; border: 5px solid #000; border-radius: 20px;
+    box-shadow: 10px 10px 0 #000;
+    padding: 28px 22px 22px; text-align: center;
+    transition: left .25s ease, top .25s ease;
+    animation: pop .4s cubic-bezier(.3, 1.8, .5, 1);
+  }
+  @keyframes pop { from { transform: translate(-50%, -50%) scale(0); } }
+  .popup.shake { animation: shake .4s; }
+  @keyframes shake {
+    0%, 100% { transform: translate(-50%, -50%) rotate(0); }
+    25% { transform: translate(-50%, -50%) rotate(-6deg); }
+    75% { transform: translate(-50%, -50%) rotate(6deg); }
+  }
+  .popup .face { font-size: 4rem; line-height: 1; }
+  .popup h2 { font-size: 1.9rem; margin: 10px 0 6px; }
+  .popup p  { font-family: system-ui, sans-serif; font-weight: 700; margin-bottom: 18px; min-height: 1.4em; }
+  .x {
+    position: absolute; top: 8px; right: 10px;
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 3px solid #000; background: #fff; font-weight: 900; font-size: 1rem;
+    cursor: pointer; transition: top .2s ease, right .2s ease;
+  }
+  .btn {
+    position: relative; font-family: 'Bungee', sans-serif; font-size: 1rem;
+    padding: 10px 26px; border: 3px solid #000; border-radius: 12px;
+    background: #fff; box-shadow: 4px 4px 0 #000; cursor: pointer;
+    transition: transform .2s ease;
+  }
+  .count { margin-top: 14px; font-size: .8rem; opacity: .8; }
+
+  /* Awareness lesson card (shown after the prank) */
+  .lesson {
+    position: fixed; inset: 0; z-index: 20; display: none;
+    align-items: center; justify-content: center; padding: 16px;
+    background: #0b1020ee;
+  }
+  .lesson.show { display: flex; animation: fade .5s ease; }
+  @keyframes fade { from { opacity: 0; } }
+  .card {
+    width: min(520px, 100%); max-height: calc(100vh - 32px); overflow: auto;
+    background: #fff; color: #111; border-radius: 18px; padding: 26px 22px;
+    border-top: 10px solid #22c55e;
+    font-family: system-ui, sans-serif; user-select: text;
+  }
+  .card .big { font-size: 3rem; text-align: center; }
+  .card h3 { font-family: 'Bungee', sans-serif; font-size: 1.4rem; text-align: center; margin: 6px 0 10px; }
+  .card .lead { text-align: center; margin-bottom: 16px; color: #333; }
+  .card ul { list-style: none; display: grid; gap: 10px; margin-bottom: 18px; }
+  .card li { background: #f1f5f9; border-radius: 10px; padding: 10px 12px; line-height: 1.4; }
+  .card li b { color: #b91c1c; }
+  .card kbd { background: #111; color: #fff; border-radius: 5px; padding: 1px 6px; font-size: .85em; }
+  .ok {
+    display: block; width: 100%; padding: 12px; border: 0; border-radius: 12px;
+    background: #22c55e; color: #fff; font-family: 'Bungee', sans-serif; font-size: 1rem; cursor: pointer;
+  }
+  .ok:hover { background: #16a34a; }
+</style>
+</head>
+<body>
+
+  <div class="title" id="title" title="Tekan la kalau berani">
+    <span>B</span><span>O</span><span>D</span><span>O</span><span>H</span>
+  </div>
+  <div class="sub">👆 tekan perkataan tu 👆</div>
+
+  <div class="overlay" id="overlay">
+    <div class="popup" id="popup">
+      <button class="x" id="x" aria-label="Tutup">✕</button>
+      <div class="face" id="face">🤪</div>
+      <h2>BODOH!</h2>
+      <p id="msg">Bodoh lagi tekan 😂</p>
+      <button class="btn" id="btn">TUTUP</button>
+      <div class="count" id="count"></div>
+    </div>
+  </div>
+
+  <div class="lesson" id="lesson">
+    <div class="card">
+      <div class="big">🛡️</div>
+      <h3>Relaks, ini cuma latihan</h3>
+      <p class="lead">Tapi kalau ini link <b>scam</b> betul, kau dah kena tadi.<br>
+        Kau klik link yang kau tak kenal, lepas tu cuba tutup popup yang tak nak tutup.</p>
+      <ul>
+        <li>🔗 <b>Jangan klik link sembarangan</b> dari WhatsApp, SMS atau email, walaupun kawan yang hantar. Akaun dia mungkin dah kena hack.</li>
+        <li>👀 <b>Tengok URL dulu.</b> Link pelik, ejaan salah (contoh <i>maybank2u-secure.xyz</i>) atau link pendek = hati-hati.</li>
+        <li>🚫 <b>Popup yang tak boleh tutup</b> atau butang yang lari = tanda bahaya. Jangan tekan apa-apa dalam popup tu.</li>
+        <li>🚪 <b>Cara keluar yang betul:</b> tutup terus tab browser (<kbd>Ctrl</kbd>+<kbd>W</kbd> / <kbd>⌘</kbd>+<kbd>W</kbd>). Jangan tekan butang dalam page.</li>
+        <li>🔑 <b>Jangan masukkan</b> password, nombor kad atau TAC dalam page yang kau sampai melalui link.</li>
+        <li>📞 Kalau ragu, <b>tanya dulu</b> orang yang hantar, melalui cara lain (call).</li>
+      </ul>
+      <button class="ok" id="ok">Faham, lepas ni saya fikir dulu sebelum klik</button>
+    </div>
+  </div>
+
+<script>
+  const overlay = document.getElementById('overlay');
+  const popup   = document.getElementById('popup');
+  const x       = document.getElementById('x');
+  const btn     = document.getElementById('btn');
+  const msg     = document.getElementById('msg');
+  const face    = document.getElementById('face');
+  const count   = document.getElementById('count');
+
+  const taunts = [
+    'Bodoh lagi tekan 😂',
+    'Tak boleh tutup la bodoh 🤭',
+    'Cuba lagi, bodoh 😜',
+    'Hahaha lari! 🏃‍♂️💨',
+    'Lambat sangat la kau 🐢',
+    'Jari ke kaki tu? 🦶',
+    'Give up je la bodoh 🙃',
+    'Nampak sangat bodoh 🤡',
+  ];
+  const faces = ['🤪', '😜', '🤭', '😝', '🤡', '😂', '🙃', '🐒'];
+  let tries = 0;
+
+  // Background floating emojis
+  setInterval(() => {
+    const e = document.createElement('div');
+    e.className = 'float';
+    e.textContent = ['🤪','🤡','🐒','😂','🧠❌','🥴'][Math.floor(Math.random() * 6)];
+    e.style.left = Math.random() * 100 + 'vw';
+    e.style.animationDuration = (4 + Math.random() * 4) + 's';
+    document.body.appendChild(e);
+    setTimeout(() => e.remove(), 8000);
+  }, 400);
+
+  // Open popup when the title is pressed (and automatically after 2s)
+  function openPopup() { if (!lessonShown) overlay.classList.add('show'); }
+  document.getElementById('title').addEventListener('click', openPopup);
+  setTimeout(openPopup, 2000);
+
+  // Move the whole popup to a random spot inside the screen
+  function movePopup() {
+    const w = popup.offsetWidth, h = popup.offsetHeight;
+    const left = w / 2 + 16 + Math.random() * Math.max(0, innerWidth  - w - 32);
+    const top  = h / 2 + 16 + Math.random() * Math.max(0, innerHeight - h - 32);
+    popup.style.left = left + 'px';
+    popup.style.top  = top + 'px';
+  }
+
+  // Make a button jump away inside the popup
+  function dodge(el) {
+    const dx = (Math.random() > .5 ? 1 : -1) * (60 + Math.random() * 60);
+    const dy = (Math.random() > .5 ? 1 : -1) * (20 + Math.random() * 30);
+    el.style.transform = `translate(${dx}px, ${dy}px)`;
+    setTimeout(() => el.style.transform = '', 700);
+  }
+
+  function tease(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    tries++;
+    msg.textContent = taunts[tries % taunts.length];
+    face.textContent = faces[tries % faces.length];
+    count.textContent = `Cubaan gagal: ${tries}`;
+    popup.classList.remove('shake'); void popup.offsetWidth; popup.classList.add('shake');
+    movePopup();
+    // After a few failed tries, stop the prank and teach the lesson
+    if (tries >= LESSON_AFTER) setTimeout(showLesson, 600);
+  }
+
+  const LESSON_AFTER = 6;   // number of failed close attempts before the lesson
+  const lesson = document.getElementById('lesson');
+  let lessonShown = false;
+  function showLesson() {
+    if (lessonShown) return;   // show the lesson only once
+    lessonShown = true;
+    overlay.classList.remove('show');
+    lesson.classList.add('show');
+  }
+  // Even if they never try to close it, show the lesson after 20s of the popup
+  setTimeout(showLesson, 22000);
+
+  // The lesson card can be closed normally
+  document.getElementById('ok').addEventListener('click', () => {
+    lesson.classList.remove('show');
+    document.querySelector('.sub').textContent = '✅ Bagus. Ingat: fikir dulu sebelum klik.';
+  });
+
+  // Hovering or touching the close buttons makes them (and the popup) run away
+  [x, btn].forEach(el => {
+    el.addEventListener('mouseenter', () => { dodge(el); tease(); });
+    el.addEventListener('touchstart', tease, { passive: false });
+    el.addEventListener('click', tease);
+  });
+
+  // No escape while the prank popup is up: Esc just teases
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && overlay.classList.contains('show')) tease(e);
+  });
+</script>
+</body>
+</html>
