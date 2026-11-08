@@ -134,19 +134,19 @@
 </head>
 <body>
 
-  <div class="title" id="title" title="Tekan la kalau berani">
+  <div class="title" id="title" title="Jom tekan 😊">
     <span>B</span><span>O</span><span>D</span><span>O</span><span>H</span>
   </div>
-  <div class="sub">👆 tekan perkataan tu 👆</div>
+  <div class="sub">👆 cuba tekan perkataan ni 👆</div>
 
   
 
   <div class="overlay" id="overlay">
     <div class="popup" id="popup">
       <button class="x run" id="x" aria-label="Tutup">✕</button>
-      <div class="face" id="face">🤪</div>
-      <h2>BODOH!</h2>
-      <p id="msg">Bodoh lagi tekan 😂</p>
+      <div class="face" id="face">😊</div>
+      <h2>Eh, sabar dulu 😊</h2>
+      <p id="msg">Jom belajar elak scam 💙</p>
       <div class="btns">
         <button class="btn run" id="btn">TUTUP</button>
         <button class="btn run" id="btn2">BATAL</button>
@@ -159,18 +159,18 @@
   <div class="lesson" id="lesson">
     <div class="card">
       <div class="big">🛡️</div>
-      <h3>Relaks, ini cuma latihan</h3>
-      <p class="lead">Kau dah cuba tutup <b id="triesOut">0</b> kali.<br>
-        Kalau ini link <b>scam</b> betul, kau dah kena dari awal lagi — klik link tak dikenali, lepas tu panik dengan popup yang tak nak tutup.</p>
+      <h3>Terima kasih — ini cuma latihan 💙</h3>
+      <p class="lead">Anda cuba tutup <b id="triesOut">0</b> kali tadi.<br>
+        Website scam sebenar pun buat begini — susah nak tutup, supaya kita panik dan tertekan apa saja. Jom kenal tandanya:</p>
       <ul>
-        <li>🔗 <b>Jangan klik link sembarangan</b> dari WhatsApp, SMS atau email, walaupun kawan yang hantar. Akaun dia mungkin dah kena hack.</li>
-        <li>👀 <b>Tengok URL dulu.</b> Link pelik, ejaan salah (contoh <i>maybank2u-secure.xyz</i>) atau link pendek = hati-hati.</li>
-        <li>🚫 <b>Popup yang tak boleh tutup</b> atau butang yang lari = tanda bahaya. Jangan tekan apa-apa dalam popup tu.</li>
-        <li>🚪 <b>Cara keluar yang betul:</b> tutup terus tab browser (<kbd>Ctrl</kbd>+<kbd>W</kbd> / <kbd>⌘</kbd>+<kbd>W</kbd>). Jangan tekan butang dalam page.</li>
-        <li>🔑 <b>Jangan masukkan</b> password, nombor kad atau TAC dalam page yang kau sampai melalui link.</li>
-        <li>📞 Kalau ragu, <b>tanya dulu</b> orang yang hantar, melalui cara lain (call).</li>
+        <li>🔗 <b>Elak klik link sembarangan</b> dari WhatsApp, SMS atau email, walaupun daripada kawan. Akaun mereka mungkin kena hack.</li>
+        <li>👀 <b>Semak URL dulu.</b> Link pelik, ejaan salah (contoh <i>maybank2u-secure.xyz</i>) atau link pendek — berhati-hati ya.</li>
+        <li>🚫 <b>Popup yang tak boleh tutup</b> atau butang yang lari ialah tanda bahaya. Elak tekan apa-apa di dalamnya.</li>
+        <li>🚪 <b>Cara keluar yang selamat:</b> tutup terus tab browser (<kbd>Ctrl</kbd>+<kbd>W</kbd> / <kbd>⌘</kbd>+<kbd>W</kbd>), bukan tekan butang dalam page.</li>
+        <li>🔑 <b>Jangan masukkan</b> kata laluan, nombor kad atau TAC dalam page yang anda sampai melalui link.</li>
+        <li>📞 Kalau ragu, <b>sahkan dulu</b> dengan penghantar melalui cara lain (telefon).</li>
       </ul>
-      <button class="ok" id="ok">Faham, lepas ni saya fikir dulu sebelum klik</button>
+      <button class="ok" id="ok">Faham, saya akan fikir dulu sebelum klik 🙏</button>
     </div>
   </div>
 
@@ -184,19 +184,19 @@
   const runners = Array.from(document.querySelectorAll('.run'));  // all "close" buttons
 
   const taunts = [
-    'Bodoh lagi tekan 😂',
-    'Tak boleh tutup la bodoh 🤭',
-    'Cuba lagi, bodoh 😜',
-    'Hahaha lari! 🏃‍♂️💨',
-    'Lambat sangat la kau 🐢',
-    'Jari ke kaki tu? 🦶',
-    'Dah 10 kali, masih tak faham? 🙃',
-    'Butang tu takkan kau dapat 🤡',
-    'Tutup tab la, bukan tekan sini 🚪',
-    'Nampak sangat bodoh 🤡',
-    'Okay okay, cukup la 😅',
+    'Susah nak tutup kan? Scam pun macam ni 💡',
+    'Jangan risau, ini cuma latihan 💙',
+    'Butang ni sengaja lari — macam website scam 😊',
+    'Sabar ya, kita belajar sikit 📚',
+    'Kalau ini scam betul, dah bahaya tau 🙏',
+    'Cara selamat: tutup tab terus 🚪',
+    'Jom teruskan, nanti ada tips 😊',
+    'Anda selamat di sini, relaks 💙',
+    'Scammer memang buat kita panik macam ni ⚠️',
+    'Hampir siap — tahan sikit lagi ✨',
+    'Okay, cukup. Jom tengok pengajaran 😊',
   ];
-  const faces = ['🤪', '😜', '🤭', '😝', '🤡', '😂', '🙃', '🐒', '🥴', '😵‍💫'];
+  const faces = ['😊', '💙', '💡', '🙂', '🤗', '🙏', '📚', '✨', '🌸', '😌'];
 
   const LESSON_AFTER = 15;   // failed close attempts before the lesson kicks in
   let tries = 0;
@@ -207,7 +207,7 @@
   setInterval(() => {
     const e = document.createElement('div');
     e.className = 'float';
-    e.textContent = ['🤪','🤡','🐒','😂','🧠❌','🥴'][Math.floor(Math.random() * 6)];
+    e.textContent = ['😊','💙','✨','🙂','📚','🛡️'][Math.floor(Math.random() * 6)];
     e.style.left = Math.random() * 100 + 'vw';
     e.style.animationDuration = (4 + Math.random() * 4) + 's';
     document.body.appendChild(e);
@@ -260,7 +260,7 @@
   // The lesson card closes normally
   $('ok').addEventListener('click', () => {
     lesson.classList.remove('show');
-    document.querySelector('.sub').textContent = '✅ Bagus. Ingat: fikir dulu sebelum klik.';
+    document.querySelector('.sub').textContent = '✅ Terima kasih! Ingat: fikir dulu sebelum klik 💙';
   });
 
   // Every "close" button dodges and teases when you hover, tap or click it
