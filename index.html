@@ -93,7 +93,7 @@
     position: absolute; top: 8px; right: 10px;
     width: 34px; height: 34px; border-radius: 50%;
     border: 3px solid #000; background: #fff; font-weight: 900; font-size: 1rem;
-    cursor: pointer; transition: top .2s ease, right .2s ease;
+    cursor: pointer; transition: transform .2s ease;
   }
   .btn {
     position: relative; font-family: 'Bungee', sans-serif; font-size: 1rem;
@@ -101,6 +101,7 @@
     background: #fff; box-shadow: 4px 4px 0 #000; cursor: pointer;
     transition: transform .2s ease;
   }
+  .btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
   .count { margin-top: 14px; font-size: .8rem; opacity: .8; }
 
   /* Awareness lesson card (shown after the prank) */
@@ -138,13 +139,33 @@
   </div>
   <div class="sub">👆 tekan perkataan tu 👆</div>
 
+  <!-- Intro: tells people up front this is a drill, before any prank starts -->
+  <div class="lesson show" id="intro">
+    <div class="card">
+      <div class="big">🎓</div>
+      <h3>Latihan: popup yang tak nak tutup</h3>
+      <p class="lead">Ini <b>latihan kesedaran scam</b>, bukan website sebenar.<br>
+        Sekejap lagi akan keluar popup yang menyusahkan kau untuk tutup — sama macam website scam sebenar.</p>
+      <ul>
+        <li>😏 Butang "tutup" akan lari dan ejek kau. Memang sengaja susah.</li>
+        <li>🚪 <b>Cara betul untuk keluar</b> page macam ni: tutup terus tab (<kbd>Ctrl</kbd>+<kbd>W</kbd> / <kbd>⌘</kbd>+<kbd>W</kbd>), bukan tekan butang dalam popup. Cuba la kalau nak.</li>
+        <li>🛡️ Lepas kau cuba, akan ada pengajaran penuh pasal cara elak scam.</li>
+      </ul>
+      <button class="ok" id="start">Saya faham — mula latihan</button>
+    </div>
+  </div>
+
   <div class="overlay" id="overlay">
     <div class="popup" id="popup">
-      <button class="x" id="x" aria-label="Tutup">✕</button>
+      <button class="x run" id="x" aria-label="Tutup">✕</button>
       <div class="face" id="face">🤪</div>
       <h2>BODOH!</h2>
       <p id="msg">Bodoh lagi tekan 😂</p>
-      <button class="btn" id="btn">TUTUP</button>
+      <div class="btns">
+        <button class="btn run" id="btn">TUTUP</button>
+        <button class="btn run" id="btn2">BATAL</button>
+        <button class="btn run" id="btn3">OK</button>
+      </div>
       <div class="count" id="count"></div>
     </div>
   </div>
@@ -153,8 +174,8 @@
     <div class="card">
       <div class="big">🛡️</div>
       <h3>Relaks, ini cuma latihan</h3>
-      <p class="lead">Tapi kalau ini link <b>scam</b> betul, kau dah kena tadi.<br>
-        Kau klik link yang kau tak kenal, lepas tu cuba tutup popup yang tak nak tutup.</p>
+      <p class="lead">Kau dah cuba tutup <b id="triesOut">0</b> kali.<br>
+        Kalau ini link <b>scam</b> betul, kau dah kena dari awal lagi — klik link tak dikenali, lepas tu panik dengan popup yang tak nak tutup.</p>
       <ul>
         <li>🔗 <b>Jangan klik link sembarangan</b> dari WhatsApp, SMS atau email, walaupun kawan yang hantar. Akaun dia mungkin dah kena hack.</li>
         <li>👀 <b>Tengok URL dulu.</b> Link pelik, ejaan salah (contoh <i>maybank2u-secure.xyz</i>) atau link pendek = hati-hati.</li>
@@ -168,13 +189,14 @@
   </div>
 
 <script>
-  const overlay = document.getElementById('overlay');
-  const popup   = document.getElementById('popup');
-  const x       = document.getElementById('x');
-  const btn     = document.getElementById('btn');
-  const msg     = document.getElementById('msg');
-  const face    = document.getElementById('face');
-  const count   = document.getElementById('count');
+  const $ = id => document.getElementById(id);
+  const intro   = $('intro');
+  const overlay = $('overlay');
+  const popup   = $('popup');
+  const msg     = $('msg');
+  const face    = $('face');
+  const count   = $('count');
+  const runners = Array.from(document.querySelectorAll('.run'));  // all "close" buttons
 
   const taunts = [
     'Bodoh lagi tekan 😂',
@@ -183,11 +205,18 @@
     'Hahaha lari! 🏃‍♂️💨',
     'Lambat sangat la kau 🐢',
     'Jari ke kaki tu? 🦶',
-    'Give up je la bodoh 🙃',
+    'Dah 10 kali, masih tak faham? 🙃',
+    'Butang tu takkan kau dapat 🤡',
+    'Tutup tab la, bukan tekan sini 🚪',
     'Nampak sangat bodoh 🤡',
+    'Okay okay, cukup la 😅',
   ];
-  const faces = ['🤪', '😜', '🤭', '😝', '🤡', '😂', '🙃', '🐒'];
+  const faces = ['🤪', '😜', '🤭', '😝', '🤡', '😂', '🙃', '🐒', '🥴', '😵‍💫'];
+
+  const LESSON_AFTER = 15;   // failed close attempts before the lesson kicks in
   let tries = 0;
+  let started = false;
+  let lessonShown = false;
 
   // Background floating emojis
   setInterval(() => {
@@ -200,12 +229,17 @@
     setTimeout(() => e.remove(), 8000);
   }, 400);
 
-  // Open popup when the title is pressed (and automatically after 2s)
-  function openPopup() { if (!lessonShown) overlay.classList.add('show'); }
-  document.getElementById('title').addEventListener('click', openPopup);
-  setTimeout(openPopup, 2000);
+  // Start the prank only after the person reads the intro and clicks the button
+  $('start').addEventListener('click', () => {
+    intro.classList.remove('show');
+    started = true;
+    overlay.classList.add('show');
+  });
 
-  // Move the whole popup to a random spot inside the screen
+  function openPopup() { if (started && !lessonShown) overlay.classList.add('show'); }
+  $('title').addEventListener('click', openPopup);
+
+  // Jump the whole popup to a random spot on screen (gets snappier as tries rise)
   function movePopup() {
     const w = popup.offsetWidth, h = popup.offsetHeight;
     const left = w / 2 + 16 + Math.random() * Math.max(0, innerWidth  - w - 32);
@@ -214,52 +248,49 @@
     popup.style.top  = top + 'px';
   }
 
-  // Make a button jump away inside the popup
+  // Make a single button hop away inside the popup
   function dodge(el) {
-    const dx = (Math.random() > .5 ? 1 : -1) * (60 + Math.random() * 60);
-    const dy = (Math.random() > .5 ? 1 : -1) * (20 + Math.random() * 30);
+    const reach = 60 + tries * 6;  // runs further the more you chase it
+    const dx = (Math.random() > .5 ? 1 : -1) * (reach + Math.random() * 60);
+    const dy = (Math.random() > .5 ? 1 : -1) * (20 + Math.random() * 40);
     el.style.transform = `translate(${dx}px, ${dy}px)`;
-    setTimeout(() => el.style.transform = '', 700);
+    setTimeout(() => el.style.transform = '', 600);
   }
 
   function tease(e) {
     if (e) { e.preventDefault(); e.stopPropagation(); }
     tries++;
-    msg.textContent = taunts[tries % taunts.length];
+    msg.textContent = taunts[Math.min(tries, taunts.length - 1) % taunts.length];
     face.textContent = faces[tries % faces.length];
     count.textContent = `Cubaan gagal: ${tries}`;
     popup.classList.remove('shake'); void popup.offsetWidth; popup.classList.add('shake');
     movePopup();
-    // After a few failed tries, stop the prank and teach the lesson
     if (tries >= LESSON_AFTER) setTimeout(showLesson, 600);
   }
 
-  const LESSON_AFTER = 6;   // number of failed close attempts before the lesson
-  const lesson = document.getElementById('lesson');
-  let lessonShown = false;
+  const lesson = $('lesson');
   function showLesson() {
     if (lessonShown) return;   // show the lesson only once
     lessonShown = true;
     overlay.classList.remove('show');
+    $('triesOut') && ($('triesOut').textContent = tries);
     lesson.classList.add('show');
   }
-  // Even if they never try to close it, show the lesson after 20s of the popup
-  setTimeout(showLesson, 22000);
 
-  // The lesson card can be closed normally
-  document.getElementById('ok').addEventListener('click', () => {
+  // The lesson card closes normally
+  $('ok').addEventListener('click', () => {
     lesson.classList.remove('show');
     document.querySelector('.sub').textContent = '✅ Bagus. Ingat: fikir dulu sebelum klik.';
   });
 
-  // Hovering or touching the close buttons makes them (and the popup) run away
-  [x, btn].forEach(el => {
+  // Every "close" button dodges and teases when you hover, tap or click it
+  runners.forEach(el => {
     el.addEventListener('mouseenter', () => { dodge(el); tease(); });
     el.addEventListener('touchstart', tease, { passive: false });
     el.addEventListener('click', tease);
   });
 
-  // No escape while the prank popup is up: Esc just teases
+  // While the prank popup is up, Esc just teases instead of closing it
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && overlay.classList.contains('show')) tease(e);
   });
