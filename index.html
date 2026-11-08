@@ -33,27 +33,53 @@
   }
 
   /* The big BODOH title */
-  .title {
-    display: flex; gap: .05em;
-    font-family: 'Bungee Shade', 'Bungee', sans-serif;
-    font-size: clamp(3.5rem, 17vw, 12rem);
-    cursor: pointer;
+  /* Spin wheel */
+  .wheelWrap { display: flex; flex-direction: column; align-items: center; gap: 18px; padding: 16px; }
+  .winTitle {
+    font-family: 'Bungee', sans-serif; text-align: center;
+    font-size: clamp(1.6rem, 6vw, 3rem);
+    background: linear-gradient(90deg, var(--yellow), var(--pink), var(--cyan));
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(3px 3px 0 #000);
+    animation: pulse 1.2s ease-in-out infinite;
   }
-  .title span {
-    display: inline-block;
-    animation: bounce 1.2s ease-in-out infinite, hue 3s linear infinite;
-    text-shadow: 0 0 20px currentColor, 6px 6px 0 #000;
+  @keyframes pulse { 50% { transform: scale(1.06); } }
+
+  .wheelBox {
+    position: relative;
+    width: min(78vw, 360px); height: min(78vw, 360px);
   }
-  .title span:nth-child(1) { animation-delay: 0s, 0s;    color: var(--pink); }
-  .title span:nth-child(2) { animation-delay: .1s, .3s;  color: var(--yellow); }
-  .title span:nth-child(3) { animation-delay: .2s, .6s;  color: var(--cyan); }
-  .title span:nth-child(4) { animation-delay: .3s, .9s;  color: var(--yellow); }
-  .title span:nth-child(5) { animation-delay: .4s, 1.2s; color: var(--pink); }
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0) rotate(-4deg) scale(1); }
-    50%      { transform: translateY(-30px) rotate(4deg) scale(1.1); }
+  .pointer {
+    position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+    font-size: 2.4rem; color: var(--yellow);
+    filter: drop-shadow(0 2px 3px #000); z-index: 3;
   }
-  @keyframes hue { to { filter: hue-rotate(360deg); } }
+  .wheel {
+    width: 100%; height: 100%; border-radius: 50%;
+    border: 8px solid #fff;
+    box-shadow: 0 0 0 6px #000, 0 12px 30px #0008;
+    position: relative; overflow: hidden;
+    transition: transform 4.5s cubic-bezier(.17, .67, .18, 1);
+  }
+  .wheel .segLabel {
+    position: absolute; inset: 0; display: flex; justify-content: center;
+    pointer-events: none;
+  }
+  .wheel .segLabel span {
+    margin-top: 9%;
+    font-family: 'Bungee', sans-serif; font-size: clamp(.6rem, 2.4vw, .95rem);
+    color: #1a0033; white-space: nowrap; text-shadow: 0 1px 0 #fff8;
+  }
+  .spinBtn {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 32%; height: 32%; border-radius: 50%; z-index: 2;
+    border: 5px solid #000; background: #fff; color: #1a0033;
+    font-family: 'Bungee', sans-serif; font-size: clamp(.9rem, 3.5vw, 1.3rem);
+    cursor: pointer; box-shadow: 0 4px 0 #000;
+    transition: transform .1s ease;
+  }
+  .spinBtn:active { transform: translate(-50%, -50%) scale(.94); }
+  .spinBtn:disabled { opacity: .7; cursor: default; }
 
   .sub {
     position: fixed; bottom: 8vh; width: 100%; text-align: center;
@@ -134,10 +160,15 @@
 </head>
 <body>
 
-  <div class="title" id="title" title="Jom tekan 😊">
-    <span>B</span><span>O</span><span>D</span><span>O</span><span>H</span>
+  <div class="wheelWrap">
+    <h1 class="winTitle">🎉 PUSING &amp; MENANG! 🎉</h1>
+    <div class="wheelBox">
+      <div class="pointer">▼</div>
+      <div class="wheel" id="wheel"></div>
+      <button class="spinBtn" id="spinBtn">SPIN</button>
+    </div>
+    <div class="sub">👆 tekan SPIN untuk cuba nasib 👆</div>
   </div>
-  <div class="sub">👆 cuba tekan perkataan ni 👆</div>
 
   
 
@@ -145,8 +176,8 @@
     <div class="popup" id="popup">
       <button class="x run" id="x" aria-label="Tutup">✕</button>
       <div class="face" id="face">😊</div>
-      <h2>Eh, sabar dulu 😊</h2>
-      <p id="msg">Jom belajar elak scam 💙</p>
+      <h2>Eh, tunggu dulu 😊</h2>
+      <p id="msg">Roda "menang" macam ni selalunya umpan scam 💡</p>
       <div class="btns">
         <button class="btn run" id="btn">TUTUP</button>
         <button class="btn run" id="btn2">BATAL</button>
@@ -163,6 +194,7 @@
       <p class="lead">Anda cuba tutup <b id="triesOut">0</b> kali tadi.<br>
         Website scam sebenar pun buat begini — susah nak tutup, supaya kita panik dan tertekan apa saja. Jom kenal tandanya:</p>
       <ul>
+        <li>🎡 <b>"Spin &amp; menang" palsu.</b> Anda tak sertai apa-apa peraduan, jadi tiada hadiah sebenar — ia cuma umpan supaya anda klik.</li>
         <li>🔗 <b>Elak klik link sembarangan</b> dari WhatsApp, SMS atau email, walaupun daripada kawan. Akaun mereka mungkin kena hack.</li>
         <li>👀 <b>Semak URL dulu.</b> Link pelik, ejaan salah (contoh <i>maybank2u-secure.xyz</i>) atau link pendek — berhati-hati ya.</li>
         <li>🚫 <b>Popup yang tak boleh tutup</b> atau butang yang lari ialah tanda bahaya. Elak tekan apa-apa di dalamnya.</li>
@@ -200,7 +232,6 @@
 
   const LESSON_AFTER = 15;   // failed close attempts before the lesson kicks in
   let tries = 0;
-  let started = true;   // no intro screen — prank is live from the start
   let lessonShown = false;
 
   // Background floating emojis
@@ -214,10 +245,45 @@
     setTimeout(() => e.remove(), 8000);
   }, 400);
 
-  // Popup opens on its own shortly after load, and when the title is pressed
-  function openPopup() { if (started && !lessonShown) overlay.classList.add('show'); }
-  $('title').addEventListener('click', openPopup);
-  setTimeout(openPopup, 2000);
+  // ---- Build the fake "spin & win" wheel (classic scam bait) ----
+  const wheel = $('wheel');
+  const spinBtn = $('spinBtn');
+  const prizes = ['RM1,000', 'Hadiah 🎁', 'Telefon 📱', 'Baucar', 'Emas ✨', 'Cuba Lagi', 'RM500', 'JACKPOT'];
+  const colA = '#ffe600', colB = '#ff2e93';      // alternating slice colours
+  const n = prizes.length, slice = 360 / n;
+
+  // Coloured slices via a conic-gradient background
+  const stops = prizes.map((_, i) =>
+    `${i % 2 ? colB : colA} ${i * slice}deg ${(i + 1) * slice}deg`).join(', ');
+  wheel.style.background = `conic-gradient(${stops})`;
+
+  // Prize labels, each rotated to sit in the middle of its slice
+  prizes.forEach((p, i) => {
+    const lab = document.createElement('div');
+    lab.className = 'segLabel';
+    lab.style.transform = `rotate(${i * slice + slice / 2}deg)`;
+    lab.innerHTML = `<span>${p}</span>`;
+    wheel.appendChild(lab);
+  });
+
+  // Popup opens only AFTER the wheel is spun
+  function openPopup() { if (!lessonShown) overlay.classList.add('show'); }
+
+  let spun = false;
+  spinBtn.addEventListener('click', () => {
+    if (spun) return;
+    spun = true;
+    spinBtn.disabled = true;
+    spinBtn.textContent = '...';
+    const turns = 5 + Math.floor(Math.random() * 3);
+    const deg = turns * 360 + Math.floor(Math.random() * 360);
+    wheel.style.transform = `rotate(${deg}deg)`;
+    // When the wheel stops, the "you won!" trap popup appears
+    let opened = false;
+    const go = () => { if (!opened) { opened = true; openPopup(); } };
+    wheel.addEventListener('transitionend', go, { once: true });
+    setTimeout(go, 5200);   // fallback if transitionend doesn't fire
+  });
 
   // Jump the whole popup to a random spot on screen (gets snappier as tries rise)
   function movePopup() {
