@@ -176,7 +176,6 @@
 
 <script>
   const $ = id => document.getElementById(id);
-  const intro   = $('intro');
   const overlay = $('overlay');
   const popup   = $('popup');
   const msg     = $('msg');
@@ -201,7 +200,7 @@
 
   const LESSON_AFTER = 15;   // failed close attempts before the lesson kicks in
   let tries = 0;
-  let started = false;
+  let started = true;   // no intro screen — prank is live from the start
   let lessonShown = false;
 
   // Background floating emojis
@@ -215,15 +214,10 @@
     setTimeout(() => e.remove(), 8000);
   }, 400);
 
-  // Start the prank only after the person reads the intro and clicks the button
-  $('start').addEventListener('click', () => {
-    intro.classList.remove('show');
-    started = true;
-    overlay.classList.add('show');
-  });
-
+  // Popup opens on its own shortly after load, and when the title is pressed
   function openPopup() { if (started && !lessonShown) overlay.classList.add('show'); }
   $('title').addEventListener('click', openPopup);
+  setTimeout(openPopup, 2000);
 
   // Jump the whole popup to a random spot on screen (gets snappier as tries rise)
   function movePopup() {
