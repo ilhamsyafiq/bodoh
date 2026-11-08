@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pasang Aplikasi</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg1: #061a2b;
+    --bg2: #0d3350;
+    --green: #22c55e;
+    --red: #ff3b3b;
+    --blue: #38bdf8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    background: radial-gradient(circle at 50% 30%, var(--bg2), var(--bg1));
+    font-family: system-ui, -apple-system, sans-serif;
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    user-select: none;
+  }
+
+  /* ---- Offer screen ---- */
+  .offer {
+    width: min(420px, calc(100vw - 32px)); text-align: center; padding: 20px;
+  }
+  .offer .badge {
+    display: inline-block; background: var(--red); color: #fff; font-weight: 800;
+    font-size: .8rem; padding: 4px 12px; border-radius: 20px; margin-bottom: 14px;
+    animation: blink 1s steps(2) infinite;
+  }
+  @keyframes blink { 50% { opacity: .35; } }
+  .offer h1 { font-family: 'Bungee', sans-serif; font-size: clamp(1.4rem, 6vw, 2.1rem); margin-bottom: 8px; }
+  .offer p { color: #cfe3f2; margin-bottom: 20px; line-height: 1.5; }
+  .offer .fakeapp {
+    display: flex; align-items: center; gap: 14px; justify-content: center;
+    background: #ffffff14; border: 1px solid #ffffff22; border-radius: 16px;
+    padding: 14px; margin-bottom: 20px;
+  }
+  .offer .fakeapp .ic { font-size: 2.6rem; }
+  .offer .fakeapp .t { text-align: left; }
+  .offer .fakeapp .t b { display: block; font-size: 1.1rem; }
+  .offer .fakeapp .t small { color: #9fc0d6; }
+  .install {
+    width: 100%; padding: 16px; border: 0; border-radius: 14px;
+    background: var(--green); color: #052e16; font-family: 'Bungee', sans-serif;
+    font-size: 1.1rem; cursor: pointer; box-shadow: 0 6px 0 #166534;
+    transition: transform .1s ease;
+  }
+  .install:active { transform: translateY(3px); box-shadow: 0 3px 0 #166534; }
+
+  /* ---- "Phone" that fills with junk apps ---- */
+  .stage { display: none; width: min(360px, calc(100vw - 32px)); }
+  .stage.show { display: block; animation: fade .4s ease; }
+  @keyframes fade { from { opacity: 0; } }
+  .phone {
+    background: #0b2236; border: 6px solid #1e4a6b; border-radius: 28px;
+    padding: 16px; box-shadow: 0 20px 50px #0009;
+  }
+  .phoneTop { text-align: center; font-size: .8rem; color: #9fc0d6; margin-bottom: 12px; }
+  .grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px 10px;
+    min-height: 220px; align-content: start;
+  }
+  .app {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    font-size: .6rem; color: #cfe3f2; text-align: center;
+    animation: drop .4s cubic-bezier(.3, 1.6, .5, 1);
+  }
+  @keyframes drop { from { transform: scale(0) translateY(-10px); opacity: 0; } }
+  .app .box {
+    width: 46px; height: 46px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
+    box-shadow: 0 3px 8px #0006;
+  }
+  .app .box.ads { position: relative; }
+  .app .box.ads::after {
+    content: 'AD'; position: absolute; top: -5px; right: -5px;
+    background: var(--red); color: #fff; font-size: .5rem; font-weight: 800;
+    padding: 1px 4px; border-radius: 6px;
+  }
+
+  /* install progress line under the phone */
+  .progress { margin-top: 14px; }
+  .progress .label { font-size: .85rem; margin-bottom: 6px; display: flex; justify-content: space-between; color: #cfe3f2; }
+  .bar { height: 14px; border-radius: 8px; background: #ffffff1a; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--green); transition: width .25s linear; }
+
+  /* ---- Lesson ---- */
+  .lesson {
+    position: fixed; inset: 0; z-index: 20; display: none;
+    align-items: center; justify-content: center; padding: 16px; background: #041320ee;
+  }
+  .lesson.show { display: flex; animation: fade .5s ease; }
+  .card {
+    width: min(540px, 100%); max-height: calc(100vh - 32px); overflow: auto;
+    background: #fff; color: #111; border-radius: 18px; padding: 26px 22px;
+    border-top: 10px solid var(--green); user-select: text;
+  }
+  .card .big { font-size: 3rem; text-align: center; }
+  .card h3 { font-family: 'Bungee', sans-serif; font-size: 1.35rem; text-align: center; margin: 6px 0 10px; }
+  .card .lead { text-align: center; margin-bottom: 16px; color: #333; }
+  .card h4 { font-size: 1rem; margin: 4px 0 8px; }
+  .card ul { list-style: none; display: grid; gap: 10px; margin-bottom: 18px; }
+  .card li { background: #eef4f9; border-radius: 10px; padding: 10px 12px; line-height: 1.4; }
+  .card li b { color: #b91c1c; }
+  .card kbd { background: #111; color: #fff; border-radius: 5px; padding: 1px 6px; font-size: .85em; }
+  .ok { display: block; width: 100%; padding: 12px; border: 0; border-radius: 12px;
+    background: var(--green); color: #fff; font-family: 'Bungee', sans-serif; font-size: 1rem; cursor: pointer; }
+  .ok:hover { background: #16a34a; }
+
+  .demoTag {
+    position: fixed; top: 10px; left: 50%; transform: translateX(-50%);
+    background: #ffffff1a; border: 1px solid #ffffff33; color: #cfe3f2;
+    font-size: .75rem; padding: 4px 12px; border-radius: 20px;
+  }
+</style>
+</head>
+<body>
+
+  <div class="demoTag">🧪 Demo kesedaran — tiada app sebenar dipasang</div>
+
+  <!-- Offer screen -->
+  <div class="offer" id="offer">
+    <span class="badge">⚠️ TINDAKAN DIPERLUKAN</span>
+    <h1>Peranti anda perlahan!</h1>
+    <p>Pasang pembersih ini untuk laju semula &amp; dapat ganjaran percuma 🎁</p>
+    <div class="fakeapp">
+      <div class="ic">🧹</div>
+      <div class="t"><b>TurboClean Pro</b><small>4.9★ · Disyorkan</small></div>
+    </div>
+    <button class="install" id="installBtn">PASANG SEKARANG</button>
+  </div>
+
+  <!-- Install stage: a phone that gets flooded with junk apps -->
+  <div class="stage" id="stage">
+    <div class="phone">
+      <div class="phoneTop" id="phoneTop">📱 Peranti saya</div>
+      <div class="grid" id="grid"></div>
+    </div>
+    <div class="progress">
+      <div class="label"><span id="pname">Memasang...</span><span id="ppct">0%</span></div>
+      <div class="bar"><i id="pfill"></i></div>
+    </div>
+  </div>
+
+  <!-- Awareness lesson -->
+  <div class="lesson" id="lesson">
+    <div class="card">
+      <div class="big">🛡️</div>
+      <h3>Jangan risau — ini cuma demo 💙</h3>
+      <p class="lead">Tiada apa-apa dipasang pada peranti anda. Tapi kalau ini scam sebenar, satu "klik" tadi boleh buka pintu kepada banyak app sampah atau app berbahaya.</p>
+
+      <h4>Apa yang baru berlaku (trik scam sebenar):</h4>
+      <ul>
+        <li>😱 <b>"Peranti anda perlahan / berjangkit"</b> ialah penipuan. Website tak boleh tahu keadaan telefon anda.</li>
+        <li>📥 <b>Satu klik → banyak app.</b> App sampah selalu bawa app lain, iklan, atau app curi data tanpa izin.</li>
+        <li>🎁 <b>Umpan "ganjaran percuma"</b> cuma untuk buat anda tekan "Pasang" tanpa fikir.</li>
+      </ul>
+
+      <h4>Cara lindungi diri:</h4>
+      <ul>
+        <li>🏪 <b>Pasang app dari kedai rasmi sahaja</b> — Play Store / App Store. Elak fail <i>.apk</i> dari link.</li>
+        <li>🚫 <b>Jangan benarkan "sumber tidak dikenali"</b> (install from unknown sources) atas permintaan website.</li>
+        <li>🔐 <b>Semak kebenaran app.</b> App pembersih tak perlu akses SMS, kontak atau bank anda.</li>
+        <li>🚪 <b>Kalau page suruh pasang app untuk teruskan</b>, tutup je tab itu (<kbd>Ctrl</kbd>+<kbd>W</kbd> / <kbd>⌘</kbd>+<kbd>W</kbd>).</li>
+        <li>🧹 Dah terlanjur pasang? <b>Buang (uninstall) segera</b> dan imbas dengan antivirus yang sah.</li>
+      </ul>
+      <button class="ok" id="ok">Faham, saya pasang app dari kedai rasmi sahaja 🙏</button>
+    </div>
+  </div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const offer = $('offer'), stage = $('stage'), grid = $('grid');
+  const pname = $('pname'), ppct = $('ppct'), pfill = $('pfill');
+  const phoneTop = $('phoneTop');
+
+  // Fictional junk-app names + icons (not real brands)
+  const junk = [
+    ['🧹', 'TurboClean'], ['🔋', 'BateriBooster'], ['🛡️', 'SuperScan'],
+    ['🌐', 'VPN Gratis'],  ['🎁', 'WinHadiah'],     ['📺', 'FreeMovies'],
+    ['🚀', 'SpeedUp X'],   ['💰', 'DuitRaya'],      ['🎰', 'LuckySpin'],
+    ['📸', 'PhotoMagic'],  ['🧊', 'CoolMaster'],    ['🔦', 'SenterPro'],
+  ];
+  const colors = ['#ef4444','#f59e0b','#10b981','#3b82f6','#8b5cf6','#ec4899','#14b8a6','#f97316'];
+
+  let installed = 0;
+  const TOTAL = 9;                 // how many junk apps "install" before the lesson
+  let lessonShown = false;
+
+  $('installBtn').addEventListener('click', () => {
+    offer.style.display = 'none';
+    stage.classList.add('show');
+    installNext();
+  });
+
+  function installNext() {
+    if (installed >= TOTAL) { phoneTop.textContent = '📱 Peranti saya (penuh app sampah 😬)'; setTimeout(showLesson, 900); return; }
+
+    const [ic, name] = junk[installed % junk.length];
+    pname.textContent = 'Memasang ' + name + '...';
+    let pct = 0;
+    pfill.style.width = '0%';
+
+    // Each app installs faster than the last — the "flood" feeling
+    const step = 6 + installed * 3;
+    const tick = setInterval(() => {
+      pct = Math.min(100, pct + step);
+      pfill.style.width = pct + '%';
+      ppct.textContent = pct + '%';
+      if (pct >= 100) {
+        clearInterval(tick);
+        addIcon(ic, name, installed > 0);   // first one "clean", rest sprout ads
+        installed++;
+        setTimeout(installNext, 250);
+      }
+    }, 60);
+  }
+
+  function addIcon(ic, name, withAd) {
+    const a = document.createElement('div');
+    a.className = 'app';
+    a.innerHTML = `<div class="box ${withAd ? 'ads' : ''}" style="background:${colors[installed % colors.length]}">${ic}</div><span>${name}</span>`;
+    grid.appendChild(a);
+  }
+
+  function showLesson() {
+    if (lessonShown) return;
+    lessonShown = true;
+    $('lesson').classList.add('show');
+  }
+
+  $('ok').addEventListener('click', () => {
+    $('lesson').classList.remove('show');
+  });
+</script>
+</body>
+</html>
